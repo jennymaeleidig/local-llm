@@ -6,6 +6,7 @@ message: >-
   CC0-1.0.
 type: software
 license: CC0-1.0
+repository-code: "https://github.com/jennymaeleidig/local-llm"
 keywords:
   - llama.cpp
   - local-llm
