@@ -6,7 +6,6 @@ message: >-
   CC0-1.0.
 type: software
 license: CC0-1.0
-repository-code: "https://example.invalid/llm-serve"
 keywords:
   - llama.cpp
   - local-llm
