@@ -309,7 +309,20 @@ prompt, the llama-server peak RSS during the long run, and the live
 number is a fact about your machine today, not a contract. Record what you
 see; do not turn it into a gate.
 
-## 9. Rollback and pin bumps
+## 9. Sidebar (herdr)
+
+```bash
+llm herdr --install
+```
+
+Registers the `llama-state` plugin shipped in `llama-state/` with herdr:
+the `prefix+m` keybinding then toggles a sidebar pane reporting the
+server's state and tokens/sec. Observation only — the plugin starts and
+stops nothing. `--uninstall` removes the registration. herdr keeps the
+registration in its own runtime state, so this is a one-time step per
+host (re-run after moving the checkout; it reconciles a stale path).
+
+## 10. Rollback and pin bumps
 
 Everything is pinned, so a rollback is a pin edit plus a re-download:
 

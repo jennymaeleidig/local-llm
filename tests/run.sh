@@ -143,6 +143,76 @@ expect_fail "dispatcher: unknown verb" "unknown verb" run_llm frobnicate
 expect_fail "dispatcher: no verb" "usage:" env HOME="$FAKE_HOME" "$LLM"
 expect_fail "state: needs a subcommand" "usage: llm state probe" run_llm state
 
+# --- 7. llm herdr: plugin registration (stub herdr via HERDR_BIN_PATH) ---------
+fresh_home
+STUB_BIN="$FIXTURES/herdr-stub"
+REG="$FIXTURES/registered"
+LOG="$FIXTURES/herdr.calls"
+: >"$LOG"
+cat >"$STUB_BIN" <<STUB
+#!/bin/bash
+case "\$1 \$2" in
+  "plugin list")
+    [ -f "$REG" ] && echo "- llama-state (Local Model State) enabled $FIXTURES/wherever"
+    ;;
+  "plugin link"|"plugin unlink")
+    echo "\$*" >>"$LOG"
+    case "\$2" in
+      link)   touch "$REG" ;;
+      unlink) rm -f "$REG" ;;
+    esac
+    ;;
+esac
+STUB
+chmod +x "$STUB_BIN"
+run_stubbed() { env HOME="$FAKE_HOME" HERDR_BIN_PATH="$STUB_BIN" "$LLM" "$@"; }
+
+# install links the vendored plugin
+echo "==> install from clean"
+OUT="$(run_stubbed herdr --install)"
+if grep -qx "plugin link $ROOT/llama-state" "$LOG"; then
+  pass "herdr --install links the vendored llama-state"
+else
+  fail "herdr --install did not link the vendored plugin: $OUT"
+fi
+
+# install is idempotent: a stale registration is unlinked first
+: >"$LOG"
+touch "$REG"
+run_stubbed herdr --install >/dev/null
+if [ "$(head -n1 "$LOG")" = "plugin unlink llama-state" ] &&
+   [ "$(tail -n1 "$LOG")" = "plugin link $ROOT/llama-state" ]; then
+  pass "herdr --install reconciles a stale registration (unlink, then link)"
+else
+  fail "herdr --install did not unlink before linking: $(cat "$LOG")"
+fi
+
+# uninstall removes the registration, and is quiet when nothing is registered
+: >"$LOG"
+run_stubbed herdr --uninstall >/dev/null
+if grep -qx "plugin unlink llama-state" "$LOG"; then
+  pass "herdr --uninstall unlinks llama-state"
+else
+  fail "herdr --uninstall did not unlink: $(cat "$LOG")"
+fi
+: >"$LOG"
+run_stubbed herdr --uninstall >/dev/null
+if [ ! -s "$LOG" ]; then
+  pass "herdr --uninstall is a no-op when not registered"
+else
+  fail "herdr --uninstall called herdr when not registered: $(cat "$LOG")"
+fi
+
+# a missing herdr binary must fail loudly, not silently skip
+if env HOME="$FAKE_HOME" HERDR_BIN_PATH="$FIXTURES/no-such-herdr" \
+    "$LLM" herdr --install >/dev/null 2>&1; then
+  fail "herdr --install with herdr missing should exit non-zero"
+else
+  pass "herdr --install fails loudly when herdr is absent"
+fi
+
+expect_fail "herdr: needs a flag" "usage: llm herdr" run_stubbed herdr
+
 if [ "$HOME" = "$FAKE_HOME" ]; then
   fail "tests clobbered the real HOME"
 fi

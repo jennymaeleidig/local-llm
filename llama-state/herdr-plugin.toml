@@ -4,8 +4,8 @@
 # in this repo stays the only launcher and pi's `/llama` stays the only loader.
 # See llama-state.py's docstring.
 #
-# Source state lives here; register it with:
-#   herdr plugin link <path to this llama-state directory>
+# Source state lives here; register it with `llm herdr --install` (this
+# directory's sibling herdr.sh).
 
 id = "llama-state"
 name = "Local Model State"

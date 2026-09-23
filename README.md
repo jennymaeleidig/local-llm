@@ -16,6 +16,7 @@ llm serve          # eval pins, preflight, exec llama-server (foreground)
 llm verify         # the gate: read-only assertions against a running server
 llm url            # print http://$SERVER_HOST:$SERVER_PORT from pins.json
 llm state probe    # one JSON sample of the server, no herdr calls
+llm herdr --install  # register the llama-state sidebar plugin with herdr
 ```
 
 `bin/llm` is the single entrypoint; put the repo's `bin/` on your PATH.
@@ -24,9 +25,10 @@ flag reasoning, and gate phases are implementation.
 
 Layout:
 
-    bin/llm            dispatcher: serve | verify | url | state probe
+    bin/llm            dispatcher: serve | verify | url | state probe | herdr
     serve.sh           launcher, moved verbatim
     gate.sh            the gate, moved verbatim
+    herdr.sh           registers llama-state with herdr (llm herdr --install)
     pins.py pins.json  the pins: exact llama.cpp build + model/draft pair
     SETUP.md           provisioning steps and flag reasoning
     llama-state/       the herdr sidebar plugin (reports server state)
@@ -35,8 +37,9 @@ Layout:
 ## Verify
 
 Run `tests/run.sh` for the offline suite: `llm url` against a bare
-checkout, and every `llm serve` preflight failure. The live gate is
-`llm verify` against a running pinned server.
+checkout, every `llm serve` preflight failure, the `llm herdr`
+registration verb (against a stubbed herdr), and the dispatcher's arg
+handling. The live gate is `llm verify` against a running pinned server.
 
 ## License
 

@@ -7,6 +7,7 @@ set -euo pipefail
 #   llm verify         the gate: read-only assertions against a running server
 #   llm url            print http://$SERVER_HOST:$SERVER_PORT from pins.json
 #   llm state probe    one JSON sample of the server, no herdr calls
+#   llm herdr          install/uninstall the sidebar plugin into herdr
 #
 # The URL is the only fact callers learn. Pins schema, drafter pairing, flag
 # reasoning, and gate phases are implementation: everything else in this repo
@@ -23,6 +24,7 @@ usage: llm <verb>
   verify         run the gate against a running server [--measure]
   url            print the server's base URL from pins.json
   state probe    one sample of the server as JSON (no herdr calls)
+  herdr          register/unregister the llama-state plugin (--install | --uninstall)
 EOF
 }
 
@@ -42,6 +44,9 @@ case "$verb" in
     [ "${1:-}" = "probe" ] || { echo "usage: llm state probe [--base-url URL]" >&2; exit 2; }
     shift
     exec python3 "$DIR/llama-state/llama-state.py" probe "$@"
+    ;;
+  herdr)
+    exec bash "$DIR/herdr.sh" "$@"
     ;;
   help | --help | -h) usage ;;
   *)
