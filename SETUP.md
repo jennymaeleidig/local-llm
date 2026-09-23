@@ -154,9 +154,8 @@ directory, reporting `FAILED open or read` for a file that is present and fine.
 
 ## 4. Apply the harness configuration
 
-Source-side work is done in the repo; applying is yours:
-
-Applying your dotfiles lands `~/.pi/agent/models.json` and the `LLAMA_BASE_URL` export in your
+Source-side work is done in the repo; applying is yours. Applying your
+dotfiles lands `~/.pi/agent/models.json` and the `LLAMA_BASE_URL` export in your
 shell dotfile. The export is rendered from `pins.json` (`server.host` and
 `server.port`), so the pins file is still the only place the address is named.
 The `models.json` override is a plain file that repeats `model.id` and
@@ -236,7 +235,8 @@ resident memory.
 llm verify
 ```
 
-Or `llm verify` from anywhere, if the repo's `bin/` is on your PATH.
+Run it from the repo root, or from anywhere once the repo's `bin/` is on
+your PATH.
 
 This is the one verification seam. It is read-only against the server (GETs
 plus stateless completions; it never loads, unloads, or reconfigures), so it is
@@ -302,8 +302,6 @@ to see the delta.
 ```bash
 llm verify --measure
 ```
-
-Or `llm verify --measure`.
 
 Prints wall-clock throughput at a short prompt and at roughly a 26K-token
 prompt, the llama-server peak RSS during the long run, and the live
