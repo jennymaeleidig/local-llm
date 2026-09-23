@@ -1,0 +1,52 @@
+#!/bin/bash
+set -euo pipefail
+#
+# llm — the single entrypoint to the local model runtime.
+#
+#   llm serve          eval pins, preflight, exec llama-server (foreground)
+#   llm verify         the gate: read-only assertions against a running server
+#   llm url            print http://$SERVER_HOST:$SERVER_PORT from pins.json
+#   llm state probe    one JSON sample of the server, no herdr calls
+#
+# The URL is the only fact callers learn. Pins schema, drafter pairing, flag
+# reasoning, and gate phases are implementation: everything else in this repo
+# is reached through one of the verbs above, never by running a script in the
+# repo root directly.
+
+DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+
+usage() {
+  cat <<'EOF'
+usage: llm <verb>
+
+  serve          eval pins, preflight, exec llama-server (foreground)
+  verify         run the gate against a running server [--measure]
+  url            print the server's base URL from pins.json
+  state probe    one sample of the server as JSON (no herdr calls)
+EOF
+}
+
+[ $# -ge 1 ] || { usage >&2; exit 2; }
+verb="$1"
+shift
+
+case "$verb" in
+  serve) exec bash "$DIR/serve.sh" "$@" ;;
+  verify) exec bash "$DIR/gate.sh" "$@" ;;
+  url)
+    # shellcheck disable=SC2046
+    eval "$(python3 "$DIR/pins.py")"
+    printf 'http://%s:%s\n' "$SERVER_HOST" "$SERVER_PORT"
+    ;;
+  state)
+    [ "${1:-}" = "probe" ] || { echo "usage: llm state probe [--base-url URL]" >&2; exit 2; }
+    shift
+    exec python3 "$DIR/llama-state/llama-state.py" probe "$@"
+    ;;
+  help | --help | -h) usage ;;
+  *)
+    echo "llm: unknown verb: $verb" >&2
+    usage >&2
+    exit 2
+    ;;
+esac

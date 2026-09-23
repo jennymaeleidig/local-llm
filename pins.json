@@ -1,0 +1,30 @@
+{
+  "llamaCpp": {
+    "release": "b11095",
+    "commit": "58367713a6935c0810103378144008df32e3d5db",
+    "assetUrl": "https://github.com/ggml-org/llama.cpp/releases/download/b11095/llama-b11095-bin-macos-arm64.tar.gz",
+    "assetBytes": 11196555,
+    "assetSha256": "67a1b119fa4b495a1f17f5b3950de24fd0bfeecce73b1619559f85ca1e740bac"
+  },
+  "model": {
+    "repo": "unsloth/gemma-4-26B-A4B-it-GGUF",
+    "revision": "c099eb48e663fd284577b04978a94ffccb261841",
+    "file": "gemma-4-26B-A4B-it-UD-Q3_K_XL.gguf",
+    "id": "gemma-4-26B-A4B-it-UD-Q3_K_XL",
+    "bytes": 12907280096,
+    "sha256": "90a918830420e6a36e01c0d219e563f1d0ca7f223dffd90ad4e02ef4f3253fde",
+    "draft": {
+      "file": "mtp-gemma-4-26B-A4B-it.gguf",
+      "bytes": 461766816,
+      "sha256": "6326fb9f5e487aa8dcdd313a091e3c67724cb2a666ec3b7d2895b5b26d93ed1b"
+    }
+  },
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8080,
+    "contextWindow": 32768,
+    "modelsDir": "local-llm/models",
+    "draftsDir": "local-llm/drafts",
+    "runtimeDir": "local-llm/runtime"
+  }
+}

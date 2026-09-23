@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+title: llm-serve
+message: >-
+  The local model runtime: a pinned llama.cpp server, its gate,
+  and the `llm` verb CLI. Provided to the public domain under
+  CC0-1.0.
+type: software
+license: CC0-1.0
+repository-code: "https://example.invalid/llm-serve"
+keywords:
+  - llama.cpp
+  - local-llm
+  - llama-server

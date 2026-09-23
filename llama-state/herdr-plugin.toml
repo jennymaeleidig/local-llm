@@ -1,0 +1,30 @@
+# Vendored plugin: the local llama-server's state, in herdr's sidebar.
+#
+# Observation only — it starts, stops, loads, and unloads nothing. `llm serve`
+# in this repo stays the only launcher and pi's `/llama` stays the only loader.
+# See llama-state.py's docstring.
+#
+# Source state lives here; register it with:
+#   herdr plugin link <path to this llama-state directory>
+
+id = "llama-state"
+name = "Local Model State"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Report the local llama-server's state and tokens/sec to herdr's sidebar"
+platforms = ["macos", "linux"]
+
+# The monitor lives in a herdr-owned pane, so closing the pane stops the
+# reporting: no daemon, pidfile, or socket to outlive its usefulness.
+[[panes]]
+id = "monitor"
+title = "llama-server state"
+placement = "split"
+command = ["python3", "llama-state.py", "monitor"]
+
+# Toggled by the prefix+m keybinding in the herdr config.
+[[actions]]
+id = "toggle"
+title = "Toggle local llama-server state"
+contexts = ["global"]
+command = ["python3", "llama-state.py", "toggle"]
